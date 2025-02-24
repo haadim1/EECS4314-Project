@@ -1,4 +1,3 @@
-Below is an updated README that replaces the React web client with a **Next.js** web application, while retaining React Native (if you still plan on building a mobile app). Feel free to customize further based on your exact setup and deployment preferences.
 
 ---
 
@@ -33,8 +32,7 @@ Last updated: February 7, 2025
 ---
 
 ## Introduction
-SalonAI is an AI-powered scheduling and recommendation platform designed to streamline hair salon operations. It automates booking, scheduling, and quoting processes, and it provides personalized hairstyle and color recommendations for clients. By integrating Next.js on the front end, the system supports better SEO and server-side rendering where needed.  
-citeturn0file0
+SalonAI is an AI-powered scheduling and recommendation platform designed to streamline hair salon operations. It automates booking, scheduling, and quoting processes, and it provides personalized hairstyle and color recommendations for clients. By integrating **Next.js 13** (using the new “App Router”) on the front end, the system supports better SEO and flexible rendering strategies (SSR or SSG) where needed.
 
 ---
 
@@ -52,17 +50,16 @@ SalonAI is an AI-powered scheduling and recommendation platform designed to stre
    - Handles quoting and pricing logic, role-based access, and analytics (optional).
 
 4. **Multi-Platform Access**  
-   - **Next.js (Web)**: Enables server-side rendering (SSR) for pages that require SEO, or static site generation (SSG) for more performance.  
-   - **React Native (Mobile)**: (Optional) for iOS and Android apps with booking, notifications, and on-the-go operations.
+   - **Next.js (Web)**: Enables server-side rendering (SSR) or static site generation (SSG) for SEO-friendly, fast-loading pages.  
+   - **React Native (Mobile)** (optional): iOS and Android apps for booking, notifications, and on-the-go operations.
 
 ---
 
 ## System Architecture
-The application is designed in layered components for scalability and maintainability:  
-citeturn0file0
+The application is designed in layered components for scalability and maintainability:
 
 1. **Presentation Layer (Front-End)**
-   - **Next.js (Web)**: Leverages server-side rendering and/or static generation for SEO-friendly, fast-loading pages.
+   - **Next.js (Web)**: Uses Next.js 13’s App Router, located in `next-app/app/`.
    - **React Native (Mobile)**: (Optional) for native mobile applications.
 
 2. **Application Layer (Backend)**
@@ -82,7 +79,7 @@ The application is designed in layered components for scalability and maintainab
 
 ## Technology Stack
 - **Backend**: Python 3, Django (or Flask), Django REST Framework (or equivalent)  
-- **Front-End**: Next.js (Node.js, TypeScript/JavaScript)  
+- **Front-End**: Next.js 13 (Node.js, TypeScript/JavaScript)  
 - **Mobile (Optional)**: React Native (JavaScript/TypeScript)  
 - **Database**: PostgreSQL (preferred) or MySQL  
 - **AI**: LLaMA 7B or 13B model with GPU support  
@@ -110,7 +107,7 @@ NEXT_PUBLIC_API_URL=http://127.0.0.1:8000   # or wherever your backend is hosted
 ```
 
 ### 3. Backend Setup
-- **Install Python dependencies**:
+- **Install Python dependencies** (once you have a `requirements.txt` in your backend folder):
   ```bash
   pip install -r requirements.txt
   ```
@@ -122,7 +119,7 @@ NEXT_PUBLIC_API_URL=http://127.0.0.1:8000   # or wherever your backend is hosted
   ```bash
   python manage.py runserver
   ```
-By default, the Django server runs on `http://127.0.0.1:8000/`.
+By default, the Django server runs on [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 
 ### 4. AI Module Setup
 - Ensure you have a GPU environment with the necessary CUDA drivers.
@@ -135,7 +132,7 @@ By default, the Django server runs on `http://127.0.0.1:8000/`.
 Adjust accordingly if your AI module is integrated directly into Django/Flask.
 
 ### 5. Front-End Setup (Next.js)
-Inside the `frontend` (or `web`) directory (where the Next.js app is located):
+Inside the `next-app` folder (where you initialized your Next.js 13 project):
 1. **Install Node.js dependencies**:
    ```bash
    npm install
@@ -144,12 +141,13 @@ Inside the `frontend` (or `web`) directory (where the Next.js app is located):
    ```bash
    npm run dev
    ```
-   By default, Next.js runs at `http://localhost:3000/`.
+   By default, Next.js runs at [http://localhost:3000/](http://localhost:3000/).
 
-> **Note**: Configure your Next.js app to point to the Django/Flask endpoints (e.g., using an `API_URL` environment variable).
+> **Note**: Configure your Next.js app to point to the Django/Flask endpoints (e.g., using `NEXT_PUBLIC_API_URL` in `.env.local`).  
+> In Next.js 13 with the App Router, you’ll see files like `app/page.tsx`, `app/layout.tsx`, etc.
 
 ### 6. (Optional) Mobile Setup (React Native)
-If you plan to build the mobile app:
+If you plan to build a mobile app (in a folder named `mobile` or similar):
 1. **Install dependencies**:
    ```bash
    npm install
@@ -164,10 +162,10 @@ Make sure you set the mobile app’s base URL to match the REST API location.
 
 ### 7. Docker / docker-compose (Optional)
 A simple `docker-compose.yml` might define containers for:
-- `web` (Django/Flask),
-- `ai_module` (separate container with the LLaMA model),
-- `db` (PostgreSQL),
-- `frontend` (Next.js).
+- **web** (Django/Flask),
+- **ai_module** (separate container with the LLaMA model),
+- **db** (PostgreSQL),
+- **frontend** (Next.js).
 
 Bring everything up with:
 ```bash
@@ -212,7 +210,7 @@ Adjust ports and environment variables as needed.
 A possible directory layout:
 
 ```
-SalonAI/
+EECS4314-Project/
 ├─ backend/
 │  ├─ salonai/          # Django/Flask source code
 │  ├─ requirements.txt
@@ -221,13 +219,18 @@ SalonAI/
 │  ├─ service.py        # AI microservice
 │  ├─ weights/          # Model weights (LLaMA)
 │  └─ ...
-├─ frontend/
-│  ├─ next-app/         # Next.js project
-│  └─ mobile/           # React Native app
+├─ next-app/            # Next.js 13 project
+│  ├─ app/              # App Router files (page.tsx, layout.tsx, etc.)
+│  ├─ public/
+│  ├─ node_modules/
+│  ├─ package.json
+│  └─ ...
 ├─ docker-compose.yml
 ├─ README.md
-└─ .env
+└─ .env                 # Shared env variables (optional)
 ```
+
+*(If using React Native, you might have a `mobile/` folder parallel to `next-app/`.)*
 
 ---
 
@@ -237,7 +240,7 @@ SalonAI/
 - **Project Manager & DevOps**: Oversees deadlines, Docker/K8s setup, integration.  
 - **Backend/Database Specialists**: Build and manage the booking logic, API routes, and database schemas in Django/Flask.  
 - **AI/ML Specialists**: Configure and fine-tune the LLaMA model, implement recommendation logic.  
-- **Front-End Developers**: Implement Next.js pages and optional React Native interfaces.
+- **Front-End Developers**: Implement Next.js pages (App Router) and optional React Native interfaces.
 
 ---
 
@@ -247,7 +250,7 @@ A rough 5–7 week timeline (with flexibility for iteration):
 
 1. **Week 1–2**  
    - Set up backend (Django/Flask) + DB schema.  
-   - Initialize Next.js project and containerize everything with Docker.
+   - Initialize Next.js project (`next-app/`) and containerize everything with Docker.
 
 2. **Week 3**  
    - Implement basic booking and user authentication flows.  
@@ -282,4 +285,5 @@ For any questions, issues, or contributions, please open a GitHub issue or conta
 
 ---
 
-**End of README**
+**End of README**  
+

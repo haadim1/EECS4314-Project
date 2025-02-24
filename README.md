@@ -96,8 +96,8 @@ The application is designed in layered components for scalability and maintainab
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/YourUsername/SalonAI.git
-cd SalonAI
+git clone https://github.com/haadim1/EECS4314-Project.git
+cd EECS4314-Project
 ```
 
 ### 2. Environment Variables

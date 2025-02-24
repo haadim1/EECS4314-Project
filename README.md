@@ -17,7 +17,7 @@ Last updated: February 7, 2025
 - [Installation & Setup](#installation--setup)
   - [1. Clone the Repository](#1-clone-the-repository)
   - [2. Environment Variables](#2-environment-variables)
-  - [3. Backend Setup](#3-backend-setup)
+  - [3. Backend Setup (Flask)](#3-backend-setup-flask)
   - [4. AI Module Setup](#4-ai-module-setup)
   - [5. Front-End Setup (Next.js)](#5-front-end-setup-nextjs)
   - [6. (Optional) Mobile Setup (React Native)](#6-optional-mobile-setup-react-native)
@@ -63,7 +63,7 @@ The application is designed in layered components for scalability and maintainab
    - **React Native (Mobile)**: (Optional) for native mobile applications.
 
 2. **Application Layer (Backend)**
-   - **Django (REST Framework)** or **Flask + SQLAlchemy** (choose based on preference).  
+   - **Flask** (with optional Flask-RESTX or Flask-Restful).  
    - Exposes REST endpoints for booking, user management, and style recommendation requests.
 
 3. **AI Module**
@@ -78,7 +78,7 @@ The application is designed in layered components for scalability and maintainab
 ---
 
 ## Technology Stack
-- **Backend**: Python 3, Django (or Flask), Django REST Framework (or equivalent)  
+- **Backend**: Python 3, Flask (with optional Flask-RESTX, Flask-Restful, or SQLAlchemy)  
 - **Front-End**: Next.js 13 (Node.js, TypeScript/JavaScript)  
 - **Mobile (Optional)**: React Native (JavaScript/TypeScript)  
 - **Database**: PostgreSQL (preferred) or MySQL  
@@ -101,35 +101,53 @@ cd EECS4314-Project
 Create a `.env` file (or similar) to store database credentials, API keys, and other sensitive info:
 ```
 DATABASE_URL=postgres://user:password@localhost:5432/salonai
-SECRET_KEY=your_django_secret_key
+SECRET_KEY=some_secret_key_for_flask
 ALLOWED_HOSTS=localhost,127.0.0.1
-NEXT_PUBLIC_API_URL=http://127.0.0.1:8000   # or wherever your backend is hosted
+NEXT_PUBLIC_API_URL=http://127.0.0.1:5000   # or wherever your Flask backend is hosted
 ```
+*(Adjust ports/URLs to match your actual setup.)*
 
-### 3. Backend Setup
-- **Install Python dependencies** (once you have a `requirements.txt` in your backend folder):
-  ```bash
-  pip install -r requirements.txt
-  ```
-- **Run Migrations** (Django example):
-  ```bash
-  python manage.py migrate
-  ```
-- **Start Server**:
-  ```bash
-  python manage.py runserver
-  ```
-By default, the Django server runs on [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+### 3. Backend Setup (Flask)
+
+1. **Create & Activate a Virtual Environment**:
+   ```bash
+   cd backend
+   python -m venv venv
+   # Windows:
+   venv\Scripts\activate
+   # macOS/Linux:
+   source venv/bin/activate
+   ```
+2. **Install Dependencies**:
+   ```bash
+   pip install flask
+   # If you want a structured API:
+   pip install flask-restx
+   # If you plan to use PostgreSQL with SQLAlchemy:
+   pip install flask_sqlalchemy psycopg2
+   ```
+3. **Create/Update `requirements.txt`**:
+   ```bash
+   pip freeze > requirements.txt
+   ```
+4. **Run Your Flask App** (e.g., `app.py`):
+   ```bash
+   python app.py
+   ```
+   By default, Flask will run at [http://127.0.0.1:5000/](http://127.0.0.1:5000/).  
+   If you have a simple endpoint like `/api/hello`, you can visit `http://127.0.0.1:5000/api/hello`.
+
+*(For more advanced usage, see the official [Flask documentation](https://flask.palletsprojects.com).)*
 
 ### 4. AI Module Setup
 - Ensure you have a GPU environment with the necessary CUDA drivers.
 - Place your LLaMA model weights in the specified directory (e.g., `ai_module/weights/`).
 - Install any required libraries (e.g., Hugging Face Transformers, Accelerate, BitsandBytes, etc.).
-- Start the AI service (this may be a separate Flask/FastAPI or gRPC service):
+- Start the AI service (this may be a separate Flask or FastAPI app, or a gRPC service):
   ```bash
   python ai_module/service.py
   ```
-Adjust accordingly if your AI module is integrated directly into Django/Flask.
+Adjust accordingly if your AI module is integrated directly into your main Flask app.
 
 ### 5. Front-End Setup (Next.js)
 Inside the `next-app` folder (where you initialized your Next.js 13 project):
@@ -143,7 +161,7 @@ Inside the `next-app` folder (where you initialized your Next.js 13 project):
    ```
    By default, Next.js runs at [http://localhost:3000/](http://localhost:3000/).
 
-> **Note**: Configure your Next.js app to point to the Django/Flask endpoints (e.g., using `NEXT_PUBLIC_API_URL` in `.env.local`).  
+> **Note**: Configure your Next.js app to point to the Flask endpoints (e.g., using `NEXT_PUBLIC_API_URL` in `.env.local`).  
 > In Next.js 13 with the App Router, you’ll see files like `app/page.tsx`, `app/layout.tsx`, etc.
 
 ### 6. (Optional) Mobile Setup (React Native)
@@ -158,11 +176,11 @@ If you plan to build a mobile app (in a folder named `mobile` or similar):
    # or
    npx react-native run-ios
    ```
-Make sure you set the mobile app’s base URL to match the REST API location.
+Make sure you set the mobile app’s base URL to match the Flask API location.
 
 ### 7. Docker / docker-compose (Optional)
 A simple `docker-compose.yml` might define containers for:
-- **web** (Django/Flask),
+- **web** (Flask),
 - **ai_module** (separate container with the LLaMA model),
 - **db** (PostgreSQL),
 - **frontend** (Next.js).
@@ -194,10 +212,10 @@ Adjust ports and environment variables as needed.
 
 ## Testing
 1. **Unit Tests**  
-   - Write Python tests for each Django/Flask module (in a `tests/` folder or within each app).  
+   - Write Python tests for your Flask endpoints (you can use [`pytest`](https://docs.pytest.org/) or [`unittest`](https://docs.python.org/3/library/unittest.html)).  
    - For Next.js, use [Jest](https://jestjs.io/) or [Testing Library](https://testing-library.com/docs/react-testing-library/intro/) to test pages and components.
 2. **Integration Tests**  
-   - Evaluate end-to-end flows (booking, quoting, AI recommendations).
+   - Evaluate end-to-end flows (booking, quoting, AI recommendations) across Flask and Next.js.
 3. **Performance Tests**  
    - Check AI response times and concurrency for recommendations.  
    - Use [Locust](https://locust.io/) or JMeter if needed.
@@ -212,22 +230,22 @@ A possible directory layout:
 ```
 EECS4314-Project/
 ├─ backend/
-│  ├─ salonai/          # Django/Flask source code
+│  ├─ app.py           # Flask source code
 │  ├─ requirements.txt
-│  └─ manage.py
+│  └─ venv/            # Virtual environment
 ├─ ai_module/
-│  ├─ service.py        # AI microservice
-│  ├─ weights/          # Model weights (LLaMA)
+│  ├─ service.py       # AI microservice
+│  ├─ weights/         # Model weights (LLaMA)
 │  └─ ...
-├─ next-app/            # Next.js 13 project
-│  ├─ app/              # App Router files (page.tsx, layout.tsx, etc.)
+├─ next-app/           # Next.js 13 project
+│  ├─ app/             # App Router files (page.tsx, layout.tsx, etc.)
 │  ├─ public/
 │  ├─ node_modules/
 │  ├─ package.json
 │  └─ ...
 ├─ docker-compose.yml
 ├─ README.md
-└─ .env                 # Shared env variables (optional)
+└─ .env                # Shared env variables (optional)
 ```
 
 *(If using React Native, you might have a `mobile/` folder parallel to `next-app/`.)*
@@ -238,7 +256,7 @@ EECS4314-Project/
 **Group 8** has seven members, each assigned specific roles:  
 citeturn0file0
 - **Project Manager & DevOps**: Oversees deadlines, Docker/K8s setup, integration.  
-- **Backend/Database Specialists**: Build and manage the booking logic, API routes, and database schemas in Django/Flask.  
+- **Backend/Database Specialists**: Build and manage the booking logic, API routes, and database schemas in Flask.  
 - **AI/ML Specialists**: Configure and fine-tune the LLaMA model, implement recommendation logic.  
 - **Front-End Developers**: Implement Next.js pages (App Router) and optional React Native interfaces.
 
@@ -249,11 +267,11 @@ A rough 5–7 week timeline (with flexibility for iteration):
 citeturn0file0
 
 1. **Week 1–2**  
-   - Set up backend (Django/Flask) + DB schema.  
-   - Initialize Next.js project (`next-app/`) and containerize everything with Docker.
+   - Set up Flask backend + DB schema (if using SQLAlchemy).  
+   - Initialize Next.js project (`next-app/`) and containerize everything (Docker).
 
 2. **Week 3**  
-   - Implement basic booking and user authentication flows.  
+   - Implement basic booking and user authentication flows in Flask.  
    - Integrate an initial AI module (placeholder model if needed).
 
 3. **Week 4**  
@@ -272,18 +290,17 @@ A rough 5–7 week timeline (with flexibility for iteration):
 
 ## Appendix & References
 - Refer to the [Group 8 Detailed Design & Implementation Plan]citeturn0file0 for full system architecture diagrams, data flow charts, and in-depth rationale behind each design choice.
-- **Django REST Framework**:  
-  [https://www.django-rest-framework.org/](https://www.django-rest-framework.org/)
+- **Flask Documentation**:  
+  [https://flask.palletsprojects.com/](https://flask.palletsprojects.com/)
 - **Next.js Documentation**:  
   [https://nextjs.org/docs](https://nextjs.org/docs)
 - **React Native Documentation** (if using mobile):  
   [https://reactnative.dev/](https://reactnative.dev/)
 - **LLaMA Model & LoRA Methods**:  
-  Refer to the open-source docs and huggingface.co guides.
+  Refer to open-source docs and huggingface.co guides.
 
 For any questions, issues, or contributions, please open a GitHub issue or contact the team via our shared channels.
 
 ---
 
-**End of README**  
-
+**End of README**

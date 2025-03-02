@@ -5,17 +5,288 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #b46e7e;
+  --primary-dark: #9e5d6d;
+  --secondary: #704834;
+  --secondary-light: #856553;
+  --accent: #d89b9e;
+  --gray-bg: #f8f8f8;
+  --gray-dark: #333333;
+  --transition-fast: 0.2s ease;
+  --transition-medium: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  
+  /* Typography */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  --font-size-6xl: 3.75rem;
+  
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --primary: #c87c8c;
+    --primary-dark: #b46e7e;
+    --secondary: #856553;
+    --secondary-light: #9e7f6d;
+    --accent: #e3adb0;
+    --gray-bg: #1a1a1a;
+    --gray-dark: #cccccc;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    letter-spacing: var(--letter-spacing-normal);
+    transition: background-color var(--transition-medium), color var(--transition-medium);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-poppins), system-ui, sans-serif;
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tight);
+    font-weight: 600;
+    margin-top: 0;
+  }
+  
+  h1 {
+    font-size: var(--font-size-4xl);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.5s ease-out;
+  }
+  
+  h2 {
+    font-size: var(--font-size-3xl);
+    margin-bottom: 1.25rem;
+  }
+  
+  h3 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    margin-bottom: 1rem;
+  }
+  
+  .accent-font {
+    font-family: var(--font-playfair), Georgia, serif;
+    font-weight: 500;
+  }
+  
+  .accent-heading {
+    font-family: var(--font-playfair), Georgia, serif;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  
+  .display-heading {
+    font-size: var(--font-size-5xl);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  
+  .gradient-text {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, var(--primary), var(--secondary));
+  }
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #333333 0%, #555555 50%, #666666 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.gradient-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+}
+
+section {
+  position: relative;
+  transition: all var(--transition-medium);
+}
+
+input, select, textarea, button {
+  transition: all var(--transition-fast);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Apply animations to various elements */
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.5s ease-out;
+}
+
+/* Staggered animations for children */
+.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+
+@layer components {
+  .btn-primary {
+    @apply bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white py-2 px-4 rounded transition-colors shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:ring-opacity-50 transform hover:-translate-y-0.5;
+  }
+  
+  .btn-secondary {
+    @apply bg-[var(--secondary)] hover:bg-[var(--secondary-light)] text-white py-2 px-4 rounded transition-colors shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--secondary)] focus:ring-opacity-50 transform hover:-translate-y-0.5;
+  }
+  
+  .container-custom {
+    @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .feature-card {
+    @apply bg-[var(--primary)] text-white p-6 rounded-md shadow-md transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-md transition-all duration-300 hover:shadow-lg;
+  }
+
+  /* Custom form styles */
+  .form-input {
+    @apply w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent transition-all duration-200;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+
+  /* Overlap sections for seamless transitions */
+  .overlap-section {
+    @apply relative -mt-8 z-10;
+  }
+  
+  /* Typography utility classes */
+  .heading-xl {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold leading-tight tracking-tight;
+  }
+  
+  .heading-lg {
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold leading-tight tracking-tight;
+  }
+  
+  .heading-md {
+    @apply text-xl md:text-2xl lg:text-3xl font-semibold leading-tight;
+  }
+  
+  .heading-sm {
+    @apply text-lg md:text-xl font-semibold leading-snug;
+  }
+  
+  .body-lg {
+    @apply text-lg leading-relaxed;
+  }
+  
+  .body-base {
+    @apply text-base leading-normal;
+  }
+  
+  .body-sm {
+    @apply text-sm leading-relaxed;
+  }
+  
+  .caption {
+    @apply text-xs leading-normal;
+  }
+}
+
+/* Enhance scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
 }

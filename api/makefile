@@ -8,7 +8,7 @@ build:
 	$(VENV)/bin/pip install -r $(REQS)
 
 run:
-	source $(VENV)/bin/activate && $(VENV)/bin/python app.py
+	source venv/bin/activate && PYTHONPATH=$(pwd) venv/bin/python run.py
 
 clean:
 	rm -rf $(VENV)

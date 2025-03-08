@@ -47,9 +47,13 @@ def login_user():
 
     if user and bcrypt.check_password_hash(user["password"], data["password"]):
         access_token = create_access_token(identity={"id": str(user["_id"]), "role": "customer"})
-        return jsonify({"access_token": access_token, "role": "customer"})
-    
+        return jsonify({
+            "access_token": access_token,
+            "user_id": str(user["_id"]),
+        })
+
     return jsonify({"error": "Invalid credentials"}), 401
+
 
 @auth_bp.route("/login/barber", methods=["POST"])
 def login_barber():
@@ -57,10 +61,17 @@ def login_barber():
     barber = mongo.barbers.find_one({"email": data["email"]})
 
     if barber and bcrypt.check_password_hash(barber["password"], data["password"]):
-        access_token = create_access_token(identity={"id": str(barber["_id"]), "role": "barber"})
-        return jsonify({"access_token": access_token, "role": "barber"})
-    
+        barber_id = str(barber["_id"])  # Ensure ID is a string
+        access_token = create_access_token(identity=barber_id)  # Store only the ID
+
+        return jsonify({
+            "access_token": access_token,
+            "barber_id": barber_id,
+            "role": "barber"
+        })
+
     return jsonify({"error": "Invalid credentials"}), 401
+
 
 @auth_bp.route("/test", methods=["GET"])
 @jwt_required()

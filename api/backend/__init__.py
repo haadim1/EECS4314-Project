@@ -32,9 +32,7 @@ jwt = JWTManager(app)
 
 # Register Blueprints
 from backend.services.auth import auth_bp
-from backend.services.booking import booking_bp
 from backend.services.barber import barber_bp
 
 app.register_blueprint(auth_bp, url_prefix="/auth")
-app.register_blueprint(booking_bp, url_prefix="/booking")
 app.register_blueprint(barber_bp, url_prefix="/barbers")

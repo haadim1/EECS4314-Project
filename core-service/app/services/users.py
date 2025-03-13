@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from bson.objectid import ObjectId
-from backend import mongo
+from app import mongo
 
 users_bp = Blueprint("users", __name__)
 

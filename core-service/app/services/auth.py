@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify  # type: ignore
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from backend import mongo, bcrypt
+from app import mongo, bcrypt
 
 auth_bp = Blueprint("auth", __name__)
 

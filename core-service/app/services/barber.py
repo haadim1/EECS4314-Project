@@ -61,3 +61,30 @@ def get_available_slots():
     available_slots = convert_objectid_to_str(barber.get("available_slots", []))
 
     return jsonify({"available_slots": available_slots}), 200
+
+@barber_bp.route("/notifications", methods=["GET"])
+@jwt_required()
+def get_notifications():
+    current_user = get_jwt_identity()
+
+    if isinstance(current_user, dict):
+        current_user_id = current_user.get("id")
+    else:
+        current_user_id = str(current_user)
+
+    try:
+        barber = mongo.barbers.find_one({"_id": ObjectId(current_user_id)})
+    except Exception as e:
+        return jsonify({"error": "Invalid user ID format"}), 400
+
+    if not barber:
+        return jsonify({"error": "Barber not found"}), 404
+
+    notifications = convert_objectid_to_str(barber.get("notifications", []))
+
+    mongo.barbers.update_one(
+        {"_id": ObjectId(current_user_id)},
+        {"$set": {"notifications": []}}
+    )
+
+    return jsonify({"notifications": notifications}), 200

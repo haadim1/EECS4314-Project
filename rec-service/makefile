@@ -1,18 +1,20 @@
-VENV_DIR=venv
-PYTHON=$(VENV_DIR)/bin/python
-PIP=$(VENV_DIR)/bin/pip
-UVICORN=$(VENV_DIR)/bin/uvicorn
+PYTHON := python3
+VENV := venv
+REQS := requirements.txt
 
-install:
-	python3 -m venv $(VENV_DIR)
-	$(PIP) install --upgrade pip
-	$(PIP) install -r requirements.txt
+build:
+	$(PYTHON) -m venv $(VENV)
+	$(VENV)/bin/pip install --upgrade pip
+	$(VENV)/bin/pip install -r $(REQS)
 
 run:
-	. $(VENV_DIR)/bin/activate && PYTHONPATH=$(PWD) $(UVICORN) app.main:app --reload
-
-freeze:
-	$(PIP) freeze > requirements.txt
+	. $(VENV)/bin/activate && PYTHONPATH=$(PWD) $(VENV)/bin/uvicorn app.app:app --reload
 
 clean:
-	rm -rf $(VENV_DIR) requirements.txt
+	rm -rf $(VENV)
+
+help:
+	@echo "Available targets:"
+	@echo "  build  - Set up the virtual environment and install dependencies"
+	@echo "  run    - Run the FastAPI app"
+	@echo "  clean  - Remove the virtual environment"

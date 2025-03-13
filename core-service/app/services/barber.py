@@ -27,17 +27,37 @@ def add_slots():
 
     return jsonify({"message": "Slots added successfully"}), 201
 
+def convert_objectid_to_str(data):
+    """ Recursively convert ObjectId fields to strings in a given data structure. """
+    if isinstance(data, dict):
+        return {k: convert_objectid_to_str(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [convert_objectid_to_str(v) for v in data]
+    elif isinstance(data, ObjectId):
+        return str(data)
+    else:
+        return data
+
 @barber_bp.route("/slots", methods=["GET"])
 @jwt_required()
 def get_available_slots():
     current_user = get_jwt_identity()
+
     if isinstance(current_user, dict):
         current_user_id = current_user.get("id")
     else:
         current_user_id = str(current_user)
-    barber = mongo.barbers.find_one({"_id": ObjectId(current_user_id)})
+
+    print("Current User ID:", current_user_id)
+
+    try:
+        barber = mongo.barbers.find_one({"_id": ObjectId(current_user_id)})
+    except Exception as e:
+        return jsonify({"error": "Invalid user ID format"}), 400
 
     if not barber:
         return jsonify({"error": "Barber not found"}), 404
 
-    return jsonify(barber["available_slots"])
+    available_slots = convert_objectid_to_str(barber.get("available_slots", []))
+
+    return jsonify({"available_slots": available_slots}), 200

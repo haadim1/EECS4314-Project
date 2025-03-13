@@ -35,7 +35,8 @@ def register_barber():
         "email": data["email"],
         "password": hashed_pw,
         "role": "barber",
-        "available_slots": []
+        "available_slots": [],
+        "notifications": []
     }).inserted_id
 
     return jsonify({"message": "Barber registered", "barber_id": str(barber_id)}), 201

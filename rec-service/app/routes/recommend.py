@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from bson.objectid import ObjectId
 from app.database import recommendations_collection, users_collection, barbers_collection
 from app.auth.jwt import get_current_user
-from app.models import RecommendationRequest  # ✅ Import from models.py
+from app.models import RecommendationRequest
 
 router = APIRouter()
 

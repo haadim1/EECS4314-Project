@@ -112,11 +112,7 @@ NEXT_PUBLIC_API_URL=http://127.0.0.1:5000   # or wherever your Flask backend is 
 1. **Create & Activate a Virtual Environment**:
    ```bash
    cd backend
-   python -m venv venv
-   # Windows:
-   venv\Scripts\activate
-   # macOS/Linux:
-   source venv/bin/activate
+   make build
    ```
 2. **Install Dependencies**:
    ```bash
@@ -132,7 +128,7 @@ NEXT_PUBLIC_API_URL=http://127.0.0.1:5000   # or wherever your Flask backend is 
    ```
 4. **Run Your Flask App** (e.g., `app.py`):
    ```bash
-   python app.py
+   make run
    ```
    By default, Flask will run at [http://127.0.0.1:5000/](http://127.0.0.1:5000/).  
    If you have a simple endpoint like `/api/hello`, you can visit `http://127.0.0.1:5000/api/hello`.

@@ -1,0 +1,7 @@
+fastapi
+flask-jwt-extended
+uvicorn
+dotenv
+certifi
+pymongo
+openai

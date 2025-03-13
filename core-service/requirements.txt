@@ -5,3 +5,4 @@ flask-jwt-extended
 dotenv
 certifi
 pymongo
+aio-pika==9.5.4

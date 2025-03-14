@@ -3,14 +3,38 @@ from bson.objectid import ObjectId
 from app.database import recommendations_collection, users_collection, barbers_collection
 from app.auth.jwt import get_current_user
 from app.models import RecommendationRequest
-
+import os
+import openai
 router = APIRouter()
+
+import openai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
 def generate_recommendation(hair_type: str, face_shape: str, preferences: str) -> str:
     """
-    Generates a recommendation based on the user's hair type, face shape, and preferences.
+    Generates a hairstyle recommendation based on the user's hair type, face shape, and preferences.
     """
-    return f"Recommended haircut for {hair_type} hair and {face_shape} face: {preferences}"
+    if not openai_api_key:
+        return "Error: OpenAI API key not found. Please check your .env file."
+
+    client = openai.OpenAI(api_key=openai_api_key)
+
+    messages = [
+        {"role": "system", "content": "You are a professional hairstylist providing expert recommendations."},
+        {"role": "user", "content": f"I have {hair_type} hair and a {face_shape} face. My preferences are: {preferences}. What hairstyle do you recommend?"}
+    ]
+
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=messages,
+        temperature=0.7,
+    )
+
+    return response.choices[0].message.content.strip()
 
 @router.post("/recommend")
 async def create_recommendation(request: RecommendationRequest, user_id: str = Depends(get_current_user)):

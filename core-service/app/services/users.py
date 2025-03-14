@@ -13,8 +13,8 @@ RABBITMQ_QUEUE_NAME = os.getenv("RABBITMQ_QUEUE_NAME")
 
 users_bp = Blueprint("users", __name__)
 
-async def send_booking_event(user_id, barber_id, time):
-    """Send booking event to RabbitMQ."""
+async def send_booking_event(user_id, barber_id, time, canceled=False):
+    """Send booking or cancellation event to RabbitMQ."""
     try:
         connection = await aio_pika.connect_robust(RABBITMQ_URL)
         async with connection:
@@ -23,8 +23,10 @@ async def send_booking_event(user_id, barber_id, time):
 
             await channel.declare_queue(RABBITMQ_QUEUE_NAME, durable=True)
 
+            event_type = "BOOKING_CANCELED" if canceled else "BOOKING_CONFIRMED"
+
             message = json.dumps({
-                "event_type": "BOOKING_CONFIRMED",
+                "event_type": event_type,
                 "user_id": user_id,
                 "barber_id": barber_id,
                 "time": time
@@ -34,10 +36,11 @@ async def send_booking_event(user_id, barber_id, time):
                 aio_pika.Message(body=message.encode()),
                 routing_key=RABBITMQ_QUEUE_NAME,
             )
-            logging.info("Booking event sent to RabbitMQ")
+            logging.info(f"{event_type} event sent to RabbitMQ")
 
     except Exception as e:
-        logging.error(f"Failed to send booking event to RabbitMQ: {e}")
+        logging.error(f"Failed to send {event_type} event to RabbitMQ: {e}")
+
 
 @users_bp.route("/book", methods=["POST"])
 @jwt_required()
@@ -99,7 +102,7 @@ def cancel_appointment():
         {"_id": ObjectId(user_id)},
         {"$pull": {"booked_slots": {"barber_id": data["barber_id"], "time": data["time"]}}}
     )
-
+    asyncio.run(send_booking_event(user_id, data["barber_id"], data["time"], True))
     return jsonify({"message": "Appointment canceled successfully"}), 200
 
 

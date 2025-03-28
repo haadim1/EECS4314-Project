@@ -12,6 +12,8 @@ def register_user():
     if mongo.users.find_one({"email": data["email"]}):
         return jsonify({"error": "Email already registered"}), 400
 
+
+
     hashed_pw = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
     user_id = mongo.users.insert_one({
         "name": data["name"],

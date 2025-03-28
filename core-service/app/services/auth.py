@@ -1,13 +1,37 @@
 from flask import Blueprint, request, jsonify  # type: ignore
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+import re
 from app import mongo, bcrypt
 
 auth_bp = Blueprint("auth", __name__)
 
+def validate_password(password):
+    
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters long"
+    
+    if not re.search(r"\d", password):
+        return False, "Password must contain at least one number"
+    
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return False, "Password must contain at least one special character"
+    
+    if not re.search(r"[A-Z]", password):
+        return False, "Password must contain at least one uppercase letter"
+    
+    if not re.search(r"[a-z]", password):
+        return False, "Password must contain at least one lowercase letter"
+    
+    return True, "Password is valid"
+
 @auth_bp.route("/register/user", methods=["POST"])
 def register_user():
     data = request.json
+
+    is_valid, message = validate_password(data["password"])
+    if not is_valid:
+        return jsonify({"error": message}), 400
 
     if mongo.users.find_one({"email": data["email"]}):
         return jsonify({"error": "Email already registered"}), 400
@@ -25,6 +49,10 @@ def register_user():
 @auth_bp.route("/register/barber", methods=["POST"])
 def register_barber():
     data = request.json
+
+    is_valid, message = validate_password(data["password"])
+    if not is_valid:
+        return jsonify({"error": message}), 400
 
     if mongo.barbers.find_one({"email": data["email"]}):
         return jsonify({"error": "Email already registered"}), 400

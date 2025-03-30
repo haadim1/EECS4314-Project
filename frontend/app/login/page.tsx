@@ -2,13 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import FloatingNav from '@/app/components/FloatingNav';
 import Footer from '@/app/components/Footer';
 import API from '@/api/axios';
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState<'client' | 'stylist'>('stylist');
@@ -20,41 +18,33 @@ export default function LoginPage() {
     setError('');
 
     const payload = { email, password, remember: rememberMe };
-    const endpoint =
-      userType === 'stylist' ? '/auth/login/barber' : '/auth/login/user';
+    const endpoint = userType === 'stylist' ? '/auth/login/barber' : '/auth/login/user';
 
     try {
       const res = await API.post(endpoint, payload, {
         withCredentials: true,
       });
 
-      console.log('Full response:', JSON.stringify(res.data, null, 2));
-
-      // Check for the actual response structure
       if (res.data && res.data.message === 'Login successful') {
-        const token = res.data.access_token;
-        const role = res.data.role;
-        const userId = res.data.user_id;
+        const { role, access_token, name } = res.data;
 
-        if (token) {
-          document.cookie = `token=${token}; path=/`;
-          localStorage.setItem('token', token);
-          localStorage.setItem('role', role);
-          localStorage.setItem('userId', userId);
-          
-          if (rememberMe) {
-            localStorage.setItem('userType', userType);
-          }
+        // Store auth data
+        localStorage.setItem('token', access_token);
+        localStorage.setItem('role', role);
+        localStorage.setItem('name', name || '');
+        
+        // Store token in cookie as well (backup)
+        document.cookie = `token=${access_token}; path=/; samesite=Lax`;
 
-          // Redirect based on role instead of userType
-          if (role === 'barber') {
-            await router.push('/dashboard/barberDash');
-          } else {
-            await router.push('/dashboard/clientDash');
-          }
-        } else {
-          setError('Authentication token not received. Please try again.');
+        if (rememberMe) {
+          localStorage.setItem('userType', userType);
         }
+
+        // Force a hard navigation instead of client-side routing
+        window.location.href = role === 'barber' 
+          ? '/dashboard/barberDash'
+          : '/dashboard/clientDash';
+
       } else {
         setError('Invalid login response. Please try again.');
       }
@@ -99,7 +89,7 @@ export default function LoginPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent text-gray-600 placeholder-gray-300"
+                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent text-gray-700"
                   placeholder="••••••••"
                   required
                 />

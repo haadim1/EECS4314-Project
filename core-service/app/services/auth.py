@@ -94,7 +94,9 @@ def login_user():
                 httponly=True,
                 secure=False,
                 samesite="Lax",
-                max_age=60 * 60 * 24 * 7  # 7 days
+                max_age=60 * 60 * 24 * 7,  # 7 days
+                domain="localhost",
+                path="/"
             )
         else:
             resp.set_cookie(
@@ -102,7 +104,9 @@ def login_user():
                 access_token,
                 httponly=True,
                 secure=False,
-                samesite="Lax"
+                samesite="Lax",
+                domain="localhost",
+                path="/"
             )
 
         return resp
@@ -133,7 +137,9 @@ def login_barber():
                 httponly=True,
                 secure=False,  # Set to True in production (HTTPS)
                 samesite="Lax",
-                max_age=60 * 60 * 24 * 7  # 7 days
+                max_age=60 * 60 * 24 * 7,  # 7 days
+                domain="localhost",
+                path="/"
             )
         else:
             resp.set_cookie(
@@ -141,7 +147,9 @@ def login_barber():
                 access_token,
                 httponly=True,
                 secure=False,
-                samesite="Lax"
+                samesite="Lax",
+                domain="localhost",
+                path="/"
             )
 
         return resp

@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { BiBell, BiLogOut } from 'react-icons/bi'
 import { BsCalendar4, BsClock, BsGear } from 'react-icons/bs'
-import FloatingNav from '@/app/components/FloatingNav'
-import Footer from '@/app/components/Footer'
+
 
 export default function BarberDashboard() {
   const router = useRouter();

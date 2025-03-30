@@ -24,7 +24,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "SalonAI - AI-Powered Salon Management",
+  title: "SalonAI",
   description: "Automate scheduling, get AI-powered hairstyle recommendations, and manage your salon effortlessly.",
   icons: {
     icon: [

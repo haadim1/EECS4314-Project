@@ -4,31 +4,44 @@ import type { NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Protected routes
-  const protectedPaths = ['/dashboard', '/booking']
-  const isProtectedRoute = protectedPaths.some(path => pathname.startsWith(path))
+  const protectedRoutes = ['/dashboard', '/booking']
+  const isProtected = protectedRoutes.some(path => pathname.startsWith(path))
 
-  if (!isProtectedRoute) {
-    return NextResponse.next()
-  }
+  if (!isProtected) return NextResponse.next()
 
-  // Check for token
   const token = request.cookies.get('token')?.value
 
   if (!token) {
-    // Redirect to login if no token found
-    const url = new URL('/login', request.url)
-    url.searchParams.set('from', pathname)
-    return NextResponse.redirect(url)
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('from', pathname)
+    return NextResponse.redirect(loginUrl)
   }
 
-  // Allow access to protected route
+  // ✅ Optional: Validate token with backend
+  try {
+    const res = await fetch('http://localhost:5000/auth/test', {
+      method: 'GET',
+      headers: {
+        Cookie: `token=${token}`,
+      },
+      credentials: 'include', 
+    })
+
+    if (!res.ok) {
+      const loginUrl = new URL('/login', request.url)
+      loginUrl.searchParams.set('from', pathname)
+      return NextResponse.redirect(loginUrl)
+    }
+  } catch (err) {
+    console.error('Middleware auth check failed:', err)
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('from', pathname)
+    return NextResponse.redirect(loginUrl)
+  }
+
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: [
-    '/dashboard/:path*',
-    '/booking/:path*',
-  ]
+  matcher: ['/dashboard/:path*', '/booking/:path*'],
 }

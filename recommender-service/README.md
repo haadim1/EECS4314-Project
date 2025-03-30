@@ -1,32 +1,3 @@
-## Requirements
-
-* dlib
-
-```
-pip install dlib
-```
-* CMake
-
-```
-pip install cmake
-```
-* Face Recognition
-
-```
-pip install face_recognition
-```
-## Running the recommendation system
-Clone, and cd into the repo directory. The first thing you need to do is to get the required packages installed by running above commands in the terminal or append '!' before command in the jupyter notebook.
-
-Note: For security reasons browsers do not allow to retrieve full file path in browser and hence no access to the File System. When a file is selected by using the input type=file object, the value of the value property depends on the value of the "Include local directory path when uploading files to a server" security setting for the security zone used to display the Web page containing the input object.
-
-The fully qualified filename of the selected file is returned only when this setting is enabled. When the setting is disabled, Browser replaces the local drive and directory path with the string C:\fakepath\ in order to prevent inappropriate information disclosure. 
-
-You should save the recommended image in the folder (data -> pics -> recommendation_pics) of the repository. To run the flask app:
-```
-FLASK_APP=app.py flask run
-```
-
 # Hair Style Recommendation
 ----------------
 ## Victor Buica
@@ -50,7 +21,7 @@ pip install face_recognition
 ```
 * Specific pillow version
 ```
-pip install pillow==8.3.1
+pip install pillow
 ```
 ## Running the recommendation system
 Depending on what shell you use you mainly need to do the following:
@@ -72,3 +43,25 @@ set FLASK_APP=app.py flask run
 python -m flask run
 ```
 Docker instructions to follow. 
+# **NOTE
+If you are running locally the backend and then the AI reccommender 
+
+then please change the following:
+
+## Configuration
+
+### Recommender Service URL
+
+The recommender service is embedded in the client dashboard via an iframe. You need to update the URL to point to your recommender service:
+
+1. Open `frontend/app/dashboard/clientDash/page.tsx`
+2. Locate the iframe in the recommendations section (around line 691):
+
+```tsx
+<iframe
+  src="http://localhost:5001"  // Change this URL to your recommender service
+  title="recommender"
+  // ...
+/>
+```
+Change the url to whatever the new port numbers would be when running it. (Default goes to 5000, increments every one up whenever a new service is running)

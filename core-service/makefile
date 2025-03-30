@@ -1,17 +1,33 @@
-PYTHON := python3
+PYTHON := python
 VENV := venv
 REQS := requirements.txt
 
+ifeq ($(OS),Windows_NT)
+    PYTHON_PATH := .\$(VENV)\Scripts
+    RM := rmdir /s /q
+    ACTIVATE := $(PYTHON_PATH)\activate
+    PIP_UPGRADE := $(PYTHON_PATH)\python -m pip install --upgrade pip
+else
+    PYTHON_PATH := ./$(VENV)/bin
+    RM := rm -rf
+    ACTIVATE := . $(PYTHON_PATH)/activate
+    PIP_UPGRADE := $(PYTHON_PATH)/python -m pip install --upgrade pip
+endif
+
 build:
 	$(PYTHON) -m venv $(VENV)
-	$(VENV)/bin/pip install --upgrade pip
-	$(VENV)/bin/pip install -r $(REQS)
+	$(PIP_UPGRADE)
+	$(PYTHON_PATH)\pip install -r $(REQS)
 
 run:
-	source venv/bin/activate && PYTHONPATH=$(pwd) venv/bin/python run.py
+ifeq ($(OS),Windows_NT)
+	$(PYTHON_PATH)\python run.py
+else
+	$(ACTIVATE) && PYTHONPATH=$(PWD) $(PYTHON_PATH)/python run.py
+endif
 
 clean:
-	rm -rf $(VENV)
+	$(RM) $(VENV)
 
 help:
 	@echo "Available targets:"

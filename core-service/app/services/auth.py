@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify  # type: ignore
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask import make_response, request
 import re
 from app import mongo, bcrypt
 
@@ -77,12 +78,34 @@ def login_user():
     if user and bcrypt.check_password_hash(user["password"], data["password"]):
         user_id = str(user["_id"])
         access_token = create_access_token(identity=user_id)
+        remember = data.get("remember", False)
 
-        return jsonify({
-            "access_token": access_token,
+        resp = make_response(jsonify({
+            "message": "Login successful",
             "user_id": user_id,
-            "role": "customer"
-        })
+            "role": "customer",
+            "access_token": access_token  # Added access_token to response
+        }))
+
+        if remember:
+            resp.set_cookie(
+                "token",
+                access_token,
+                httponly=True,
+                secure=False,
+                samesite="Lax",
+                max_age=60 * 60 * 24 * 7  # 7 days
+            )
+        else:
+            resp.set_cookie(
+                "token",
+                access_token,
+                httponly=True,
+                secure=False,
+                samesite="Lax"
+            )
+
+        return resp
 
     return jsonify({"error": "Invalid credentials"}), 401
 
@@ -94,12 +117,34 @@ def login_barber():
     if barber and bcrypt.check_password_hash(barber["password"], data["password"]):
         barber_id = str(barber["_id"])
         access_token = create_access_token(identity=barber_id)
+        remember = data.get("remember", False)
 
-        return jsonify({
-            "access_token": access_token,
+        resp = make_response(jsonify({
+            "message": "Login successful",
             "barber_id": barber_id,
-            "role": "barber"
-        })
+            "role": "barber",
+            "access_token": access_token  # Added access_token to response
+        }))
+
+        if remember:
+            resp.set_cookie(
+                "token",
+                access_token,
+                httponly=True,
+                secure=False,  # Set to True in production (HTTPS)
+                samesite="Lax",
+                max_age=60 * 60 * 24 * 7  # 7 days
+            )
+        else:
+            resp.set_cookie(
+                "token",
+                access_token,
+                httponly=True,
+                secure=False,
+                samesite="Lax"
+            )
+
+        return resp
 
     return jsonify({"error": "Invalid credentials"}), 401
 

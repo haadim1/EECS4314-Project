@@ -29,13 +29,6 @@ export default function FloatingNav() {
             </Link>
             
             <Link 
-              href="/pricing" 
-              className="text-sm font-medium text-gray-800 dark:text-gray-100 px-3 py-1.5 rounded-full hover:bg-gray-100/70 dark:hover:bg-gray-800/70 transition-all duration-300 transform hover:scale-110"
-            >
-              Pricing
-            </Link>
-            
-            <Link 
               href="/about" 
               className="text-sm font-medium text-gray-800 dark:text-gray-100 px-3 py-1.5 rounded-full hover:bg-gray-100/70 dark:hover:bg-gray-800/70 transition-all duration-300 transform hover:scale-110"
             >

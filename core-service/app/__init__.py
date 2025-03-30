@@ -20,7 +20,8 @@ app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "fallback_secret_key"
 app.config['JWT_TOKEN_LOCATION'] = ['cookies']
 app.config['JWT_COOKIE_SECURE'] = False         # True in production (HTTPS)
 app.config['JWT_COOKIE_SAMESITE'] = 'Lax'
-app.config['JWT_COOKIE_CSRF_PROTECT'] = False   
+app.config['JWT_COOKIE_CSRF_PROTECT'] = False  
+app.config['JWT_ACCESS_COOKIE_NAME'] = 'token' # Name of the cookie to store the JWT token 
 
 # Encode MongoDB credentials
 username = urllib.parse.quote_plus(os.getenv("MONGO_USERNAME"))

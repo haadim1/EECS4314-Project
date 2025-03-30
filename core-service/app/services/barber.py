@@ -88,3 +88,23 @@ def get_notifications():
     )
 
     return jsonify({"notifications": notifications}), 200
+
+@barber_bp.route("/all", methods=["GET"])
+@jwt_required()
+def get_all_barbers():
+    try:
+        barbers_cursor = mongo.barbers.find()
+        barbers = []
+
+        for barber in barbers_cursor:
+            barber_data = {
+                "id": str(barber["_id"]),
+                "name": barber.get("name", ""),
+                "email": barber.get("email", "")
+            }
+            barbers.append(barber_data)
+
+        return jsonify({"barbers": barbers}), 200
+
+    except Exception as e:
+        return jsonify({"error": "An error occurred while fetching barbers", "details": str(e)}), 500

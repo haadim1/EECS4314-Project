@@ -26,6 +26,15 @@ export default function ClientDashboard() {
   const [appointments, setAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [barbers, setBarbers] = useState([]);
+  const [selectedBarber, setSelectedBarber] = useState<string | null>(null);
+
+  const services = [
+    { id: 'haircut', name: 'Haircut', duration: '30', price: '40' },
+    { id: 'color', name: 'Hair Coloring', duration: '120', price: '120' },
+    { id: 'style', name: 'Hair Styling', duration: '60', price: '70' },
+    { id: 'treatment', name: 'Hair Treatment', duration: '45', price: '55' },
+  ];
 
   const fetchUserInfo = async () => {
     try {
@@ -55,6 +64,15 @@ export default function ClientDashboard() {
     }
   };
 
+  const fetchBarbers = async () => {
+    try {
+      const response = await API.get('/barbers/all');
+      setBarbers(response.data.barbers);
+    } catch (error) {
+      console.error('Error fetching barbers:', error);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
@@ -65,8 +83,14 @@ export default function ClientDashboard() {
     }
     
     fetchUserInfo();
-    fetchAppointments(); // Add this line
+    fetchAppointments(); 
   }, [router]);
+
+  useEffect(() => {
+    if (showBookingForm) {
+      fetchBarbers();
+    }
+  }, [showBookingForm]);
 
   const handleLogout = () => {
     // Clear all auth-related data
@@ -116,6 +140,7 @@ export default function ClientDashboard() {
   };
 
   const resetBookingForm = () => {
+    setSelectedBarber(null);
     setSelectedService(null);
     setSelectedDate('');
     setSelectedTime(null);
@@ -125,38 +150,43 @@ export default function ClientDashboard() {
   };
 
   const handleBookingSubmit = async () => {
-    if (!selectedService || !selectedDate || !selectedTime) {
+    if (!selectedBarber || !selectedService || !selectedDate || !selectedTime) {
       setBookingError('Please select all required fields');
       return;
     }
-
+  
     setIsBooking(true);
     setBookingError('');
-
+  
     try {
+      const selectedServiceData = services.find(s => s.id === selectedService);
+      
+      // Create payload matching the backend requirements
       const payload = {
-        service: selectedService,
+        barber_id: selectedBarber,
+        service: selectedServiceData?.name,
         date: selectedDate,
         time: selectedTime,
-        notes: bookingNotes,
-        barber_id: "default_barber_id" // You'll need to implement barber selection
+        notes: bookingNotes || "",
+        price: parseInt(selectedServiceData?.price || "0"),
+        duration: parseInt(selectedServiceData?.duration || "0")
       };
-
+  
       const response = await API.post('/users/book', payload);
-
+  
       if (response.status === 201) {
-        // Reset form and close modal
         resetBookingForm();
-        // Refresh appointments list
         fetchAppointments();
+        handleCloseBookingForm();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Booking error:', error);
-      setBookingError('Failed to book appointment. Please try again.');
+      setBookingError(error.response?.data?.error || 'Failed to book appointment. Please try again.');
     } finally {
       setIsBooking(false);
     }
   };
+  
 
   const handleCancelAppointment = async () => {
     if (!selectedAppointment) return;
@@ -419,9 +449,9 @@ export default function ClientDashboard() {
                   className="fixed inset-0 bg-black/50 transition-opacity duration-300"
                   onClick={handleCloseBookingForm}
                 />
-                {/* Modal Content */}
+                {/* Modal Content - Updated size */}
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                  <div className={`bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto relative transform transition-all duration-300 ${
+                  <div className={`bg-white rounded-lg p-8 max-w-4xl w-full mx-4 max-h-[95vh] overflow-y-auto relative transform transition-all duration-300 ${
                     showBookingForm ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
                   }`}>
                     <div className="flex justify-between items-start mb-4">
@@ -438,6 +468,26 @@ export default function ClientDashboard() {
                     </div>
 
                     <div className="space-y-6">
+                      {/* Stylist Selection */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Select Stylist <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          value={selectedBarber || ''}
+                          onChange={(e) => setSelectedBarber(e.target.value)}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent text-gray-700"
+                          required
+                        >
+                          <option value="">Choose a stylist...</option>
+                          {barbers.map((barber) => (
+                            <option key={barber.id} value={barber.id}>
+                              {barber.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
                       {/* Service Selection */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -455,13 +505,15 @@ export default function ClientDashboard() {
                               onClick={() => handleServiceSelection(service.id)}
                               className={`p-4 border rounded-lg text-left transition-colors ${
                                 selectedService === service.id 
-                                  ? 'border-[var(--primary)] bg-[var(--primary)]/5' 
-                                  : 'hover:border-[var(--primary)]'
+                                  ? 'border-[#8B4513] bg-[#DEB887] text-gray-900' 
+                                  : 'hover:border-[var(--primary)] text-gray-700'
                               }`}
                             >
-                              <h4 className="font-medium text-gray-900">{service.name}</h4>
+                              <h4 className="font-medium">{service.name}</h4>
                               <p className="text-sm text-gray-500">{service.duration}</p>
-                              <p className="text-sm font-medium text-[var(--primary)]">{service.price}</p>
+                              <p className={`text-sm font-medium ${
+                                selectedService === service.id ? 'text-gray-900' : 'text-[var(--primary)]'
+                              }`}>{service.price}</p>
                             </button>
                           ))}
                         </div>
@@ -469,7 +521,9 @@ export default function ClientDashboard() {
 
                       {/* Date Selection */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className={`block text-sm font-medium mb-2 ${
+                          selectedDate ? 'text-gray-700' : 'text-gray-500'
+                        }`}>
                           Select Date <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -477,14 +531,16 @@ export default function ClientDashboard() {
                           value={selectedDate}
                           onChange={handleDateChange}
                           min={new Date().toISOString().split('T')[0]}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent text-gray-700"
                           required
                         />
                       </div>
 
                       {/* Time Selection */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className={`block text-sm font-medium mb-2 ${
+                          selectedTime ? 'text-gray-700' : 'text-gray-500'
+                        }`}>
                           Select Time <span className="text-red-500">*</span>
                         </label>
                         <div className="grid grid-cols-4 gap-2">
@@ -495,9 +551,9 @@ export default function ClientDashboard() {
                             <button
                               key={time}
                               onClick={() => handleTimeSelection(time)}
-                              className={`px-4 py-2 border rounded-md transition-colors ${
+                              className={`px-4 py-2 border rounded-md transition-colors text-gray-700 ${
                                 selectedTime === time 
-                                  ? 'border-[var(--primary)] bg-[var(--primary)]/5' 
+                                  ? 'border-[#8B4513] bg-[#DEB887] text-gray-900' 
                                   : 'hover:border-[var(--primary)]'
                               }`}
                             >
@@ -509,21 +565,32 @@ export default function ClientDashboard() {
 
                       {/* Notes */}
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className={`block text-sm font-medium mb-2 ${
+                          bookingNotes ? 'text-gray-700' : 'text-gray-500'
+                        }`}>
                           Additional Notes
                         </label>
                         <textarea
                           rows={3}
                           value={bookingNotes}
                           onChange={handleNotesChange}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent"
+                         className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent text-gray-700"
                           placeholder="Any special requests or notes for your stylist..."
                         />
                       </div>
 
-                      {/* Error Message */}
+                      {/* Error Message - Updated styling */}
                       {bookingError && (
-                        <div className="text-red-500 text-sm">{bookingError}</div>
+                        <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+                          <div className="flex items-center">
+                            <svg className="h-5 w-5 text-red-400 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                            </svg>
+                            <p className="text-base font-medium text-red-800">
+                              {bookingError}
+                            </p>
+                          </div>
+                        </div>
                       )}
 
                       {/* Submit Button */}

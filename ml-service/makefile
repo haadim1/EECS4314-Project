@@ -17,6 +17,11 @@ build:
 	$(PYTHON_PATH)\python -m pip install --upgrade pip
 	$(PIP) install -r $(REQS)
 
+build-macos:
+	$(PYTHON) -m venv $(VENV)
+	./$(VENV)/bin/python -m pip install --upgrade pip
+	./$(VENV)/bin/pip install -r $(REQS)
+	
 run:
 ifeq ($(OS),Windows_NT)
 	$(PYTHON_PATH)\uvicorn app.app:app --reload

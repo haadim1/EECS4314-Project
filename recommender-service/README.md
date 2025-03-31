@@ -42,7 +42,7 @@ set FLASK_APP=app.py flask run
 ```
 python -m flask run
 ```
-Docker instructions to follow. 
+
 # **NOTE
 If you are running locally the backend and then the AI reccommender 
 
@@ -65,3 +65,17 @@ The recommender service is embedded in the client dashboard via an iframe. You n
 />
 ```
 Change the url to whatever the new port numbers would be when running it. (Default goes to 5000, increments every one up whenever a new service is running)
+
+# Docker 
+First thing you do is download docker if you do not have it yet. 
+
+[Docker Download Page](https://www.docker.com/get-started)
+
+Then pull the following
+```
+docker pull victorbuica/recommender-service:v1.0
+```
+then you run this:
+```
+docker run -d -p 5001:5001 victorbuica/recommender-service:v1.0
+```

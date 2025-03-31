@@ -1,13 +1,7 @@
-version: '4'
+version: '3.8'
 services:
-  hairstyle-app:
+  flask_app:
     build: .
+    container_name: flask_app
     ports:
-      - "5000:5000"
-    volumes:
-      - ./data:/app/data
-      - ./output:/app/output
-    environment:
-      - FLASK_APP=app.py
-      - FLASK_ENV=development
-    restart: unless-stopped
+      - "5001:5001"

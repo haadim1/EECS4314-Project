@@ -684,8 +684,27 @@ export default function ClientDashboard() {
             </div>
           )}
           {activePage === 'recommendations' && (
-            <div>
-              {/* Recommendations page content */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-semibold text-[var(--primary)]">Recommendations</h2>
+              <div>
+                <iframe
+                  src="http://localhost:5001"
+                  title="recommender"
+                  style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    border: 'none',
+                    margin: 0,
+                    padding: 0,
+                    overflow: 'hidden',
+                    zIndex: 999999
+                  }}
+                  allow="microphone; camera; autoplay; clipboard-write; encrypted-media;"
+                />
+              </div>
             </div>
           )}
           {activePage === 'services' && (

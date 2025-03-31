@@ -4,6 +4,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from flask import make_response, request
 import re
 from app import mongo, bcrypt
+from datetime import datetime
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -58,17 +59,35 @@ def register_barber():
     if mongo.barbers.find_one({"email": data["email"]}):
         return jsonify({"error": "Email already registered"}), 400
 
+    # Hash password
     hashed_pw = bcrypt.generate_password_hash(data["password"]).decode("utf-8")
+
+    # Create barber document with comprehensive fields
     barber_id = mongo.barbers.insert_one({
         "name": data["name"],
         "email": data["email"],
         "password": hashed_pw,
-        "role": "barber",
+        "phone": data.get("phone", ""),
+        "experience": data.get("experience", ""),
+        "specialties": data.get("specialties", []),
+        "bio": data.get("bio", ""),
+        "profile_image": data.get("profile_image", ""),
+        "rating": 0,
+        "total_reviews": 0,
         "available_slots": [],
-        "notifications": []
+        "booked_appointments": [], 
+        "services": data.get("services", []),
+        "working_hours": data.get("working_hours", {}),
+        "client_count": 0,
+        "notifications": [],
+        "role": "barber",
+        "created_at": datetime.utcnow()
     }).inserted_id
 
-    return jsonify({"message": "Barber registered", "barber_id": str(barber_id)}), 201
+    return jsonify({
+        "message": "Barber registered successfully",
+        "barber_id": str(barber_id)
+    }), 201
 
 @auth_bp.route("/login/user", methods=["POST"])
 def login_user():

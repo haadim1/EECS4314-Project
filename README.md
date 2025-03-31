@@ -1,11 +1,10 @@
-
----
-
 # SalonAI
 
 **AI-Based Scheduling & Recommending App for Hair Salons**  
 A project by Group 8 (Lassonde School of Engineering, York University)  
-Last updated: February 7, 2025
+Last updated: February 7, 2025  
+
+▶️ **[Watch the Demo](https://youtu.be/U4ATsBlZStI)**  
 
 ---
 

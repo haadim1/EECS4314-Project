@@ -68,7 +68,7 @@ def crop_face(image, eye_left=(0,0), eye_right=(0,0), offset_pct=(0.3,0.3), dest
     crop_size = (dest_sz[0]*scale, dest_sz[1]*scale)
     image = image.crop((int(crop_xy[0]), int(crop_xy[1]), int(crop_xy[0]+crop_size[0]), int(crop_xy[1]+crop_size[1])))
     # resize it
-    image = image.resize(dest_sz, Image.ANTIALIAS)
+    image = image.resize(dest_sz, Image.Resampling.LANCZOS)
     return image
 
 def make_face_df_save(image_select,filenum,df):

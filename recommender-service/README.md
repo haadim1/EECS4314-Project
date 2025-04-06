@@ -5,27 +5,29 @@
 # NOTE
 best way to do it is to pull the docker container for this part of the project instead of running with the dependencies
 
-# Docker instructions:
+# Docker instructions: Recommended is dockerHub approach
 First thing you do is download docker if you do not have it yet. 
 
 [Docker Download Page](https://www.docker.com/get-started)
 
-Then pull the following
-```
-docker pull victorbuica/recommender-service:v1.1
-```
-then you run this:
-```
-docker run -d -p 5001:5001 victorbuica/recommender-service:v1.1
-```
-This can also be done in the docker desktop just type the following in the search bar:
-```
-victorbuica/recommender-service:v1.1
-```
-and then press the run button
+1. **Terminal**
+   - pull the following
+    ```
+    docker pull victorbuica/recommender-service:v1.1
+    ```
+    then you run this:
+    ```
+    docker run -d -p 5001:5001 victorbuica/recommender-service:v1.1
+    ```
+2. **Docker Hub APP** 
+   - This can also be done in the docker desktop just type the following in the search bar:
+    ```
+    victorbuica/recommender-service:v1.1
+    ```
+    and then press the run button
 
 
-## Requirements
+## Requirements (Only if you really do not want to use the container)
 
 * dlib
 

@@ -688,7 +688,7 @@ export default function ClientDashboard() {
               <h2 className="text-2xl font-semibold text-[var(--primary)]">Recommendations</h2>
               <div>
                 <iframe
-                  src="http://localhost:5001"
+                  src="https://recommender-service-510709848798.us-central1.run.app"
                   title="recommender"
                   style={{
                     position: 'fixed',

@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # Frontend service
+  frontend:
+    build: ./frontend
+    container_name: salonai-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+      - NEXT_PUBLIC_RECOMMENDER_URL=http://localhost:5001
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - core-service
+    networks:
+      - salonai-network
+    restart: unless-stopped
+
+  # Core Service (Backend API)
+  core-service:
+    build: ./core-service
+    container_name: salonai-core
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGO_USERNAME=${MONGO_USERNAME}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_CLUSTER=${MONGO_CLUSTER}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - RABBITMQ_URL=${RABBITMQ_URL}
+      - RABBITMQ_QUEUE_NAME=${RABBITMQ_QUEUE_NAME}
+      - PYTHONPATH=/app
+      - FLASK_APP=app
+      - FLASK_ENV=development
+      - CORS_ORIGINS=http://localhost:3000
+    volumes:
+      - ./core-service:/app
+    networks:
+      - salonai-network
+    restart: unless-stopped
+
+networks:
+  salonai-network:
+    driver: bridge

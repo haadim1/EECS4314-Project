@@ -1,32 +1,80 @@
 # SalonAI
+**[View Project Documentation](./project_documentation.pdf)**
+## Repository link:
+[Repository Link](https://github.com/haadim1/EECS4314-Project)
 
-**AI-Based Scheduling & Recommending App for Hair Salons**  
+### AI-Based Scheduling & Recommending App for Hair Salons
 A project by Group 8 (Lassonde School of Engineering, York University)  
 Last updated: February 7, 2025  
 
 ▶️ **[Watch the Demo](https://youtu.be/U4ATsBlZStI)**  
 
+Live link here:
+[live link](https://eecs4314-frontend-510709848798.us-central1.run.app)
+
+#### If features are broken or firewall does not let you acess the link then pull the following docker container images and run them:
+*Docker instructions: Recommended is dockerHub approach*
+ 
+
+[Docker Download Page](https://www.docker.com/get-started)
+
+1. **Docker Hub APP** 
+   - This can also be done in the docker desktop just type the following in the search bar:
+    ```
+    victobui784/eecs4314-core-service
+    victobui784/eecs4314-frontend
+    ```
+    and then press the run button
+2. **Terminal**
+   - pull the following
+    ```
+    docker pull victobui784/eecs4314-core-service
+    docker pull victobui784/eecs4314-frontend
+    ```
+    then you run this:
+    ```
+    docker run -d -p 5000:5000 victobui784/eecs4314-core-service
+    docker run -d -p 5000:5000 victobui784/eecs4314-frontend
+    ```
+3. **Root folder has docker compose**
+   - From the root folder you can also run the command in terminal:
+   ```
+   docker-compose up --build
+   ```
+# Images
+For demo purposes please pic an image from the 
+```
+./data/pics/recommendation_pics/
+```
+
+
 ---
 
 ## Table of Contents
-- [Introduction](#introduction)
-- [Features](#features)
-- [System Architecture](#system-architecture)
-- [Technology Stack](#technology-stack)
-- [Installation & Setup](#installation--setup)
-  - [1. Clone the Repository](#1-clone-the-repository)
-  - [2. Environment Variables](#2-environment-variables)
-  - [3. Backend Setup (Flask)](#3-backend-setup-flask)
-  - [4. AI Module Setup](#4-ai-module-setup)
-  - [5. Front-End Setup (Next.js)](#5-front-end-setup-nextjs)
-  - [6. (Optional) Mobile Setup (React Native)](#6-optional-mobile-setup-react-native)
-  - [7. Docker / docker-compose (Optional)](#7-docker--docker-compose-optional)
-- [Usage](#usage)
-- [Testing](#testing)
-- [Project Structure](#project-structure)
-- [Team Organization](#team-organization)
-- [Schedule & Milestones](#schedule--milestones)
-- [Appendix & References](#appendix--references)
+- [SalonAI](#salonai)
+  - [Repository link:](#repository-link)
+    - [AI-Based Scheduling \& Recommending App for Hair Salons](#ai-based-scheduling--recommending-app-for-hair-salons)
+      - [If features are broken or firewall does not let you acess the link then pull the following docker container images and run them:](#if-features-are-broken-or-firewall-does-not-let-you-acess-the-link-then-pull-the-following-docker-container-images-and-run-them)
+- [Images](#images)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Features](#features)
+  - [System Architecture](#system-architecture)
+  - [Technology Stack](#technology-stack)
+  - [Installation \& Setup](#installation--setup)
+    - [1. Clone the Repository](#1-clone-the-repository)
+    - [2. Environment Variables](#2-environment-variables)
+    - [3. Backend Setup (Flask)](#3-backend-setup-flask)
+    - [4. AI Module Setup](#4-ai-module-setup)
+    - [5. Front-End Setup (Next.js)](#5-front-end-setup-nextjs)
+    - [6. (Optional) Mobile Setup (React Native)](#6-optional-mobile-setup-react-native)
+    - [7. Docker / docker-compose (Optional)](#7-docker--docker-compose-optional)
+  - [Usage](#usage)
+  - [Testing](#testing)
+  - [Project Structure](#project-structure)
+  - [Team Organization](#team-organization)
+  - [Schedule \& Milestones](#schedule--milestones)
+  - [Appendix \& References](#appendix--references)
 
 ---
 

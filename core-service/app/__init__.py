@@ -33,6 +33,8 @@ app.config['JWT_COOKIE_SECURE'] = False         # True in production (HTTPS)
 app.config['JWT_COOKIE_SAMESITE'] = 'Lax'
 app.config['JWT_COOKIE_CSRF_PROTECT'] = False  
 app.config['JWT_ACCESS_COOKIE_NAME'] = 'token' # Name of the cookie to store the JWT token 
+app.config['JWT_HEADER_NAME'] = 'Authorization'  # Name of the header
+app.config['JWT_HEADER_TYPE'] = 'Bearer'  # Type of the header
 
 # Encode MongoDB credentials
 username = urllib.parse.quote_plus(os.getenv("MONGO_USERNAME"))
